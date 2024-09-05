@@ -9,25 +9,44 @@ import java.util.*;
 @Repository
 public class StudentDatabase {
 
-    private final HashMap<UUID, ?> studentEvents = new HashMap<>();
+    private final HashMap<UUID, List<Event>> studentEvents = new HashMap<>();
     private final HashMap<UUID, Student> students = new HashMap<>();
 
     public int StreamsCount() {
-        return 0;
+        return studentEvents.size();
     }
 
     public int StreamLength(UUID id) {
-        return 0;
+        return Optional.ofNullable(studentEvents.get(id))
+                .map(List::size)
+                .orElse(0);
     }
 
-    public void Append(Event event) {}
+    public void Append(Event event) {
+        studentEvents.computeIfAbsent(event.getStreamId(), k -> new ArrayList<>())
+                .add(event);
+
+        students.put(
+                event.getStreamId(),
+                getStudent(event.getStreamId())
+                        .orElse(null)
+        );
+    }
 
     public Optional<Student> getStudent(UUID studentId) {
-        return Optional.empty();
+        if (!studentEvents.containsKey(studentId)) {
+            return Optional.empty();
+        }
+
+        var student = new Student();
+        studentEvents.get(studentId)
+                .forEach(student::Apply);
+
+        return Optional.of(student);
     }
 
     public Optional<Student> getStudentView(UUID studentId) {
-        return Optional.empty();
+        return Optional.ofNullable(students.get(studentId));
     }
 
     public List<Student> getStudents() {

@@ -15,5 +15,33 @@ public class Student {
     private final Set<String> enrolledCourses = new HashSet<>();
     private Instant dateOfBirth;
 
-    public void Apply(StudentCreated studentCreated) {}
+    public void Apply(StudentCreated studentCreated) {
+        id = studentCreated.getStudentID();
+        fullName = studentCreated.getFullName();
+        email = studentCreated.getEmail();
+        dateOfBirth = studentCreated.getDateOfBirth();
+    }
+
+    public void Apply(StudentUpdated studentUpdated) {
+        fullName = studentUpdated.getFullName();
+        email = studentUpdated.getEmail();
+    }
+
+    public void Apply(StudentEnrolled enrolled) {
+        enrolledCourses.add(enrolled.getCourseName());
+    }
+
+    public void Apply(StudentUnEnrolled unEnrolled) {
+        enrolledCourses.remove(unEnrolled.getCourseName());
+    }
+
+    public void Apply(Event event) {
+        switch (event) {
+            case StudentCreated studentCreated -> Apply(studentCreated);
+            case StudentUpdated studentUpdated -> Apply(studentUpdated);
+            case StudentEnrolled enrolled -> Apply(enrolled);
+            case StudentUnEnrolled unEnrolled -> Apply(unEnrolled);
+            default -> throw new RuntimeException("Unhandled event: " + event);
+        }
+    }
 }

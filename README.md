@@ -1,7 +1,5 @@
 # Event Sourcing
 
-Go here to get started: https://classroom.github.com/a/1NK_hDas
-
 ## A. Scenario
 
 > Why rely on traditional data handling approaches when we can implement event streaming ourselves? How hard can it be?!
